@@ -12,6 +12,7 @@ import (
 	"os"
 	"reflect"
 	"time"
+	"strings"
 
 	// Telegram
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
