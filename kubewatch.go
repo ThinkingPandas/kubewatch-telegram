@@ -169,7 +169,7 @@ func main() {
 	// Watch for the given resource:
 	for _, resource := range *argResources {
 		for _, x := range strings.Split(*flgNamespace, ",") {
-			watchResource(clientset, resource, *flgNamespace)
+			watchResource(clientset, resource, x)
 		}
 	}
 
