@@ -11,8 +11,8 @@ RUN apk add -U --no-cache ca-certificates
 
 ENV GOPATH="/go"
 RUN apk add -U --no-cache -t dev git go musl-dev \
-    && go get github.com/prg3/kubewatch-telegram \
-    && go build -o /usr/local/bin/kubewatch github.com/prg3/kubewatch-telegram \
+    && go get github.com/thinkingpandas/kubewatch-telegram \
+    && go build -o /usr/local/bin/kubewatch github.com/thinkingpandas/kubewatch-telegram \
     && apk del --purge dev && rm -rf /tmp/* /go \
 	&& rm -rf /var/cache/apk/*
 
