@@ -163,7 +163,7 @@ func main() {
 		log.Panic(err)
 	}
 	group := int64(-1) * *argGroup
-	msg := tgbotapi.NewMessage(group, fmt.Sprintf("Hello from your friendly Telegram Bot starting up"))
+	msg := tgbotapi.NewMessage(group, fmt.Sprintf("%s - Setting up bot for namespaces: %s", *flgMessagePrefix, *flgNamespace))
 	bot.Send(msg)
 
 	// Watch for the given resource:
