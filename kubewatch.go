@@ -54,8 +54,12 @@ var (
 		Default(kubeconfigPath()).ExistingFileOrDir()
 
 	flgNamespace = app.Flag("namespace",
-		"Set the namespace to be watched.").
+		"Set the namespaces to be watched (comma-delimited).").
 		Default(v1.NamespaceAll).HintAction(listNamespaces).String()
+
+	flgMessagePrefix = app.Flag("message-prefix",
+		"Set message body prefix.").
+		Default("").String()
 
 	flgFlatten = app.Flag("flatten",
 		"Whether to produce flatten JSON output or not.").Bool()
@@ -64,8 +68,8 @@ var (
 		"API Key for Telegram bot").Required().String()
 
 	argGroup = app.Flag("telegramgroup",
-		`Group that the bot should post to. 
-Note that Telegram groups are negative values, but drop the - here. 
+		`Group that the bot should post to.
+Note that Telegram groups are negative values, but drop the - here.
 If you wish to message an individual, you will need to add a negative on the command line`).Required().Int64()
 	// Arguments:
 	argResources = app.Arg("resources",
@@ -163,7 +167,9 @@ func main() {
 
 	// Watch for the given resource:
 	for _, resource := range *argResources {
-		watchResource(clientset, resource, *flgNamespace)
+		for _, x := range strings.Split(*flgNamespace, ",") {
+			watchResource(clientset, resource, *flgNamespace)
+		}
 	}
 
 	// Block forever:
@@ -242,11 +248,11 @@ func printPod(v *v1.Pod, bot *tgbotapi.BotAPI) {
 	group := int64(-1) * *argGroup
 
 	if len(v.OwnerReferences) > 0 {
-		msg := tgbotapi.NewMessage(group, fmt.Sprintf("Pod from deployment %s changed state to %s on %s\n", v.OwnerReferences[0].Name, v.Status.Phase, v.Spec.NodeName))
+		msg := tgbotapi.NewMessage(group, fmt.Sprintf("*%s* - Pod from deployment %s changed state to %s on %s\n", flgMessagePrefix, v.OwnerReferences[0].Name, v.Status.Phase, v.Spec.NodeName))
 		bot.Send(msg)
 
 	} else {
-		msg := tgbotapi.NewMessage(group, fmt.Sprintf("Pod: %s changed state to %s\n", v.GetName(), v.Status.Phase))
+		msg := tgbotapi.NewMessage(group, fmt.Sprintf("*%s* - Pod: %s changed state to %s\n", flgMessagePrefix, v.GetName(), v.Status.Phase))
 		bot.Send(msg)
 	}
 }
